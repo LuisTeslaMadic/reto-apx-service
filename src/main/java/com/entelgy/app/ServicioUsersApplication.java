@@ -10,7 +10,6 @@ public class ServicioUsersApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ServicioUsersApplication.class, args);
-		System.out.println(FunctionUtils.FechaActual());
 	}
 
 }

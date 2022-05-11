@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
-import com.entelgy.app.models.service.UserService;
+import com.entelgy.app.business.service.UserService;
 import com.entelgy.app.utils.FunctionUtils;
 
 @RestController
@@ -22,48 +22,31 @@ public class UserController {
  
 	@Autowired
 	private UserService userService;
-	
-	/*
-	 * Example : "Mon May 09 12:19:33 PET 2022"
-	 * 
-	 * */
-	
+
 	@PostMapping("/fechaConvert")
-	public ResponseEntity<?> listOfUsers(@RequestBody String fecha){
-		Map<String,Object> response = new HashMap<String,Object>();
-		List<String> lisOfUSers = null;
-		try {
-			lisOfUSers = userService.listaUsuarios().stream().map(data ->{
-				return "<"+data.getId()+">"+"|"+"<"+data.getLast_name()+">"+"|"+"<"+data.getEmail()+">";
-			}).collect(Collectors.toList());
-			
-		}catch(HttpClientErrorException e) {
-			response.put("Ocurrio un error :",e.getMessage().concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		System.out.println(fecha);
-		response.put("operationDate",FunctionUtils.FechaActual());
-		response.put("data",lisOfUSers );
-		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+	public ResponseEntity<?> listOfUsersPost(){
+		return getResponseEntity();
 	}
 	
 	@GetMapping("/listar")
-	public ResponseEntity<?> listOfUsers(){
-		Map<String,Object> response = new HashMap<String,Object>();
+	public ResponseEntity<?> listOfUsersGet(){
+		return getResponseEntity();
+	}
+
+	private ResponseEntity<Map<String,Object>> getResponseEntity() {
+		Map<String,Object> response = new HashMap<>();
 		List<String> lisOfUSers = null;
 		try {
-			lisOfUSers = userService.listaUsuarios().stream().map(data ->{
-				return "<"+data.getId()+">"+"|"+"<"+data.getLast_name()+">"+"|"+"<"+data.getEmail()+">";
-			}).collect(Collectors.toList());
-			
+			lisOfUSers = userService.listaModificada();
+
 		}catch(HttpClientErrorException e) {
 			response.put("Ocurrio un error :",e.getMessage().concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		response.put("operationDate",FunctionUtils.FechaActual());
+		response.put("operationDate", FunctionUtils.fechaActual());
 		response.put("data",lisOfUSers );
-		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
-	
+
+
 }
