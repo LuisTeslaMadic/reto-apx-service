@@ -1,4 +1,4 @@
-package com.entelgy.app.controllers.integracion;
+package com.entelgy.app.controllers.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.Arrays;
 import java.util.List;
 
+import com.entelgy.app.utils.ObjectMapperHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -20,8 +21,6 @@ import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -31,22 +30,21 @@ class UserControllerTest {
     private TestRestTemplate client;
 	
 	
-	private ObjectMapper objectMapper;
+	private ObjectMapperHelper objectMapperHelper;
 
 	@BeforeEach
 	void setUp() throws Exception {
-		objectMapper = new ObjectMapper();
+		objectMapperHelper = new ObjectMapperHelper();
 	}
 
 	@Test
 	@Order(1)
 	void testListUsers() throws JsonMappingException, JsonProcessingException {
 		ResponseEntity<String> respuesta = client.getForEntity("/listar", String.class);
-		 String json = respuesta.getBody();
-		JsonNode jsonNode = objectMapper.readTree(json);
-		String fecha = jsonNode.path("operationDate").toString();
+		String json = respuesta.getBody();
+		String fecha = objectMapperHelper.convertFromJsonToString(json,"operationDate");
 		
-		List<String> users = Arrays.asList(jsonNode.path("data").toString()
+		List<String> users = Arrays.asList(objectMapperHelper.convertFromJsonToString(json,"data")
 				             .replace("]","").replace("[", "").replace("\"", "").split(","));
 		assertNotNull(fecha);
 		assertEquals(HttpStatus.OK,respuesta.getStatusCode());
@@ -60,5 +58,8 @@ class UserControllerTest {
 		assertEquals("<6>|<Ramos>|<tracey.ramos@reqres.in>",users.get(5));
 		
 	}
+
+
+
 
 }

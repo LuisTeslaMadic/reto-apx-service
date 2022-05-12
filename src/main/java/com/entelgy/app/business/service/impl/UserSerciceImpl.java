@@ -1,8 +1,9 @@
-package com.entelgy.app.business.service;
+package com.entelgy.app.business.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.entelgy.app.business.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -17,7 +18,7 @@ import com.entelgy.app.models.entity.UserModalData;
  *
  */
 @Service
-public class UserSerciceImpl implements UserService{
+public class UserSerciceImpl implements UserService {
     
 	@Autowired
 	private RestTemplate userRest;
